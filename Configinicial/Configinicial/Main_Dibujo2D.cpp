@@ -1,7 +1,7 @@
 //López Hernández Miriam AAmisadai
 //Fecha de entrega 
 //320260366
-//Previo 2 
+//Practica 2 
 
 #include<iostream>
 
@@ -28,7 +28,7 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);*/
 
-	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Dibujo de Primitivas en 2D - Miriam Lopez", NULL, NULL);
+	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Dibujo de Primitivas en 2D - Miriam Lopez - Practica 2", NULL, NULL);
 	glfwSetFramebufferSizeCallback(window, resize);
 	
 	//Verificaci�n de errores de creacion  ventana
@@ -64,14 +64,94 @@ int main() {
 
 	// Set up vertex data (and buffer(s)) and attribute pointers
 	float vertices[] = {
-	0.5f,  0.5f, 0.0f,    1.0f,0.0f,0.0f,  // top right
+	/*0.5f,  0.5f, 0.0f,    1.0f,0.0f,0.0f,  // top right
 	0.5f, -0.5f, 0.0f,    1.0f,1.0f,0.0f,  // bottom right
 	-0.5f, -0.5f, 0.0f,   1.0f,0.0f,1.0f,  // bottom left
 	-0.5f,  0.5f, 0.0f,   1.0f,1.0f,0.0f, // top left 
+	*/
+
+
+	//OREJA IZQUIERDA 
+	-3.0f/6.0f, 5.5f/6.0f, 0.0f,		0.40f, 0.20f, 0.05f,  // 0 V1
+	-4.0f/6.0f, 3.55/6.0f, 0.0f,		0.76f, 0.47f, 0.15f,  // 1 V2
+	-1.75f/6.0f, 3.75f/6.0f, 0.0f, 		0.76f, 0.47f, 0.15f,  // 2 V3
+	-3.15f/6.0f,  1.3f/6.0f, 0.0f, 		0.76f, 0.47f, 0.15f,  // 3 V4
+	-2.15f/6.0f, 1.2f/6.0f, 0.0f, 		0.76f, 0.47f, 0.15f,  // 4 V5
+
+	//OREJA DERECHA
+	1.5f/6.0f, 5.0f/6.0f, 0.0f, 		0.40f, 0.20f, 0.05f,  // 5 V6
+	0.25f/6.0f, 3.6/6.0f, 0.0f, 		0.76f, 0.47f, 0.15f,  // 6 V7
+	1.5f/6.0f, 3.0f/6.0f, 0.0f,			0.76f, 0.47f, 0.15f,  // 7 V8
+	-0.5f/6.0f, 1.0f/6.0f, 0.0f,		0.76f, 0.47f, 0.15f,  // 8 V9
+	0.75f/6.0f, 0.9f/6.0f, 0.0f,		0.76f, 0.47f, 0.15f,  // 9 V10
+	
+
+	//CABEZA 
+	-4.25f/6.0f, -0.8f/6.0f, 0.0f,		0.40f, 0.20f, 0.05f, // 10 V11
+	-2.5f/6.0f, -0.9f/6.0f, 0.0f,		0.76f, 0.47f, 0.15f, // 11 V12
+	-1.0f/6.0f, -1.0f/6.0f, 0.0f,		0.76f, 0.47f, 0.15f, // 12 V13
+	1.0f/6.0f, -1.0f/6.0f, 0.0f,		0.40f, 0.20f, 0.05f, // 13 V14
+	-2.6f/6.0f, -2.0f/6.0f, 0.0f, 		0.76f, 0.47f, 0.15f, // 14 V15
+	-2.0f/6.0f, -2.5f/6.0f, 0.0f, 		0.40f, 0.20f, 0.05f, // 15 V16
+
+
+	//CUERPO Y PATAS 
+	-1.65f/6.0f, -4.0/6.0f, 0.0f,		0.76f, 0.47f, 0.15f, // 16 V17
+	-2.75f/6.0f, -5.3f/6.0f, 0.0f,		0.40f, 0.20f, 0.05f, // 17 V18
+	-1.8f/6.0f, -5.3f/6.0f, 0.0f, 		0.40f, 0.20f, 0.05f, // 18 V19
+	-1.4f/6.0f, -4.6f/6.0f, 0.0f,		0.76f, 0.47f, 0.15f, // 19 V20
+	0.75f/6.0f, -5.3f/6.0f, 0.0f, 		0.40f, 0.20f, 0.05f, // 20 V21
+
+	2.6f/6.0f, -3.2f/6.0f, 0.0f,		0.76f, 0.47f, 0.15f, // 21 V22
+	4.0f/6.0f, -2.0f/6.0f, 0.0f,		0.40f, 0.20f, 0.05f, // 22 V23
+	4.4f/6.0f, -4.75f/6.0f, 0.0f,		0.40f, 0.20f, 0.05f, // 23 V24
+	4.25f/6.0f, -5.3f/6.0f, 0.0f,		0.40f, 0.20f, 0.05f, // 24 V25
+
+
 	};
+
+
+
 	unsigned int indices[] = {  // note that we start from 0!
-		3,2,1,// second Triangle
+		/*3,2,1,// second Triangle
 		0,1,3,
+		*/
+		//OREJA IZQUIERDA
+		0, 2, 1, //triangulo 1
+		1, 2, 3, //triangulo 2
+		2, 4, 3, //triangulo 3
+
+		//OREJA DERECHA
+		5, 7, 6, //triangulo 4
+		6, 7, 8, //triangulo 5
+		8, 7, 9, //triangulo 6
+
+		//CABEZA
+		3,11,10,
+		3,4,11,
+		4,8,11,
+		8,12,11,
+		8,9,12,
+		9,13,12,
+		10,11,15,
+		11,12,15,
+		12,13,15,
+
+		//CUERPO  
+		15,19,14,
+		15,13,19,
+		13,21,19,
+		13,22,21,
+		22,23,21,
+		21,23,24,
+		21,24,20,
+		21,20,19,
+
+		//PATAS
+		16,18,17,
+		16,19,18,
+		19,20,18,
+
 
 	};
 
@@ -128,9 +208,11 @@ int main() {
 		// se cambia el ultimo numero por la cantidad de puntos a dibujar
 		//(GL_POINTS,0,2) para dibujar los dos primeros puntos del arreglo
 
-
+		/*
         glPointSize(10);
-        glDrawArrays(GL_POINTS,0,4);
+        glDrawArrays(GL_POINTS,0,21);*/
+
+
         
 
 
@@ -151,7 +233,7 @@ int main() {
 		//se dibuja el triangulo con los vertices 0, 1 y 3 del arreglo
 		//GL_TRIANGLES, cantidad de indices a dibujar, tipo de los indices, puntero a los indices
 
-        //glDrawElements(GL_TRIANGLES, 3,GL_UNSIGNED_INT,0);
+        glDrawElements(GL_TRIANGLES, 78,GL_UNSIGNED_INT,0);
 
 
         
