@@ -1,7 +1,7 @@
 //López Hernández Miriam AAmisadai
-//Fecha de entrega 22/02/2026
+//Fecha de entrega 23/02/2026
 //320260366
-//Previo 3
+//Practica 3
 
 #include<iostream>
 
@@ -242,7 +242,6 @@ int main() {
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		/*
-		//CUBO 1
 		model = glm::mat4(1);
 		model = glm::translate(model, glm::vec3(0.0f, -5.0f, -18.0f));
 		model = glm::rotate(model, 0.5f, glm::vec3(0.0f, 0.0f, 1.0f)); // use to compare orthographic and perspective projection
@@ -264,13 +263,12 @@ int main() {
 		*/
 
 		//INICIO DE LA PRÁCTICA 3, GENERAR UNA PIRAMIDE CON LAS MISMAS TRANSFORMACIONES QUE EL CUBO, 
-		// PARA COMPARAR LAS PROYECCIONES ORTOGRAFICA Y PERSPECTIVA
 		//Para esto se crean nuevos vertices para la piramide, y se agregan a los vertices del cubo,
-		// para que se puedan dibujar con el mismo VAO y VBO
+		//para que se puedan dibujar con el mismo VAO y VBO
 		//el número de cubos va a ser igual que el tamaño de mi nombre, es decir, tendre un total de 6 cubos
 		//cada cubo tendra que ser mas grande que el anterior, y cada uno se va a mover hacia arriba, 
-		// para que se puedan ver todos los cubos, y se pueda comparar la proyeccion ortografica con la perspectiva
-
+		//para que se puedan ver todos los cubos, y se pueda comparar la proyeccion ortografica con la perspectiva
+		
 		//cubo 2
 		model = glm::mat4(1);
 		model = glm::translate(model, glm::vec3(0.0f, 3.5f, 0.0f));
@@ -278,7 +276,6 @@ int main() {
 		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-
 		
 		//cubo 3
 		model = glm::mat4(1);
@@ -304,7 +301,6 @@ int main() {
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		
 		//cubo 6
 		model = glm::mat4(1);
 		model = glm::translate(model, glm::vec3(-0.2f, 26.5f, 0.0f));
@@ -313,7 +309,6 @@ int main() {
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		
 
 		glBindVertexArray(0);
 
