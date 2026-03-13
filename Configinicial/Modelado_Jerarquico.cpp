@@ -430,17 +430,17 @@ void Inputs(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)  //GLFW_RELEASE
 		glfwSetWindowShouldClose(window, true);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		movX += 0.08f;
+		movX += 0.008f;
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		movX -= 0.08f;
+		movX -= 0.008f;
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 		movY += 0.08f;
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		movY -= 0.08f;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		movZ -= 0.08f;
+		movZ -= 0.008f;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		movZ += 0.08f;
+		movZ += 0.008f;
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 		rot += 0.18f;
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
@@ -490,7 +490,6 @@ void Inputs(GLFWwindow* window) {
 			dedo4B -= 0.04f;
 			dedo5B += 0.04f;
 		}
-
 	}
 	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
 		if (dedo1B < 0.0f) {
@@ -501,7 +500,6 @@ void Inputs(GLFWwindow* window) {
 			dedo5B -= 0.04f;
 		}
 	}
-
 	// Para manejar la articulación de los dedos C y a la vez limitar su movimiento a un rango de 0 a -90 grados, para simular la flexión de los dedos solo hacia un lado
 	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
 		if (dedo1C > -90.0f) {
@@ -510,7 +508,6 @@ void Inputs(GLFWwindow* window) {
 			dedo3C -= 0.04f;
 			dedo4C -= 0.04f;
 		}
-
 	}
 	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
 		if (dedo1C < 0.0f) {
@@ -520,5 +517,4 @@ void Inputs(GLFWwindow* window) {
 			dedo4C += 0.04f;
 		}
 	}
-
 }
