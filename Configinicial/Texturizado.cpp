@@ -1,6 +1,6 @@
 //López Hernández Miriam Amisadai
 //320260366
-//Fecha de entrega: 21/03/2026
+//Fecha de entrega: 22/03/2026
 //Previo 7
 
 #include <iostream>
@@ -157,18 +157,21 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 	// Diffuse map
 	//image = stbi_load("images/checker_Tex.png", &textureWidth, &textureHeight, &nrChannels,0);
+	image = stbi_load("images/colores.jpg", &textureWidth, &textureHeight, &nrChannels, 0);
 
 	//cargamos la textura con transparencia 
-	image = stbi_load("images/window.png", &textureWidth, &textureHeight, &nrChannels, 0);
+	//image = stbi_load("images/window.png", &textureWidth, &textureHeight, &nrChannels, 0);
+	//image = stbi_load("images/transparencia.png", &textureWidth, &textureHeight, &nrChannels, 0);
+
 	glBindTexture(GL_TEXTURE_2D, texture1);
 
 	//Dado que metimos una textura con transparencia, tenemos que decirle a OpenGL que la textura tiene un canal alpha, 
 	// por lo que el formato de la imagen no es RGB sino RGBA
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	if (image)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
