@@ -1,7 +1,7 @@
 //López Hernández Miriam Amisadai
 //320260366
-//Fecha de entrega: 22/03/2026
-//Previo 7
+//Fecha de entrega: 24/03/2026
+//Practica 7
 
 #include <iostream>
 #include <cmath>
@@ -61,7 +61,7 @@ int main()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 	// Create a GLFWwindow object that we can use for GLFW's functions
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Texturizado - Previo 7 - Miriam Lopez", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Texturizado - Practica 7 - Miriam Lopez", nullptr, nullptr);
 
 	if (nullptr == window)
 	{
@@ -104,21 +104,75 @@ int main()
 	// Set up vertex data (and buffer(s)) and attribute pointers
 	GLfloat vertices[] =
 	{
-		// Positions            // Colors              // Texture Coords
+	/*	// Positions            // Colors              // Texture Coords
 		-0.5f, -0.5f, 0.0f,    1.0f, 1.0f,1.0f,		0.0f,0.0f,
 		0.5f, -0.5f, 0.0f,	   1.0f, 1.0f,1.0f,		1.0f,0.0f,
 		0.5f,  0.5f, 0.0f,     1.0f, 1.0f,1.0f,	    1.0f,1.0f,
-		-0.5f,  0.5f, 0.0f,    1.0f, 1.0f,1.0f,		0.0f,1.0f,
+		-0.5f,  0.5f, 0.0f,    1.0f, 1.0f,1.0f,		0.0f,1.0f,*/
 
-		
+
+		//ASIGNANDO LOS VALORES PARA E CUBO
+		//cara frontal
+		-0.5f, -0.5f,  0.5f,   1.0f, 1.0f, 1.0f,    1.0/3.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,   1.0f, 1.0f, 1.0f,    1.99/3.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,   1.0f, 1.0f, 1.0f,    1.99/3.0f, 1.0/4.0f,
+			
+		 0.5f,  0.5f,  0.5f,   1.0f, 1.0f, 1.0f,    1.99/3.0f, 1.0/4.0f,
+		-0.5f,  0.5f,  0.5f,   1.0f, 1.0f, 1.0f,    1.0/3.0f, 1.0/4.0f,
+		-0.5f, -0.5f,  0.5f,   1.0f, 1.0f, 1.0f,    1.0/3.0f, 0.0f,
+
+		//cara trasera
+		-0.5f, -0.5f, -0.5f,   1.0f, 1.0f, 1.0f,    1.0/3.0f, 2.99/4.0f,
+		 0.5f, -0.5f, -0.5f,   1.0f, 1.0f, 1.0f,    1.99/3.0f, 2.99/4.0F,
+		 0.5f,  0.5f, -0.5f,   1.0f, 1.0f, 1.0f,    1.99/3.0f, 2.015/4.0f,
+
+		 0.5f,  0.5f, -0.5f,   1.0f, 1.0f, 1.0f,    1.99/3.0f, 2.015/4.0f,
+		-0.5f,  0.5f, -0.5f,   1.0f, 1.0f, 1.0f,    1.0/3.0f, 2.015/4.0f,
+		-0.5f, -0.5f, -0.5f,   1.0f, 1.0f, 1.0f,    1.0/3.0f, 2.99/4.0f,
+
+		//cara izquierda
+		-0.5f,  0.5f,  0.5f,   1.0f, 1.0f, 1.0f,    1.0/3.0f, 1.0/4.0f,
+		-0.5f,  0.5f, -0.5f,   1.0f, 1.0f, 1.0f,    1.0/3.0f, 2.015/4.0f,
+		-0.5f, -0.5f, -0.5f,   1.0f, 1.0f, 1.0f,    0.001f, 2.015/4.0f,
+
+		-0.5f, -0.5f, -0.5f,   1.0f, 1.0f, 1.0f,    0.001f, 2.015/4.0f,
+		-0.5f, -0.5f,  0.5f,   1.0f, 1.0f, 1.0f,    0.001f, 1.0/4.0f,
+		-0.5f,  0.5f,  0.5f,   1.0f, 1.0f, 1.0f,    1.0/3.0f, 1.0/4.0f,
+
+		//cara derecha 
+		 0.5f,  0.5f,  0.5f,   1.0f, 1.0f, 1.0f,    1.99/3.0f, 1.0/4.0f,
+		 0.5f,  0.5f, -0.5f,   1.0f, 1.0f, 1.0f,    1.99/3.0f, 2.015/4.0f,
+		 0.5f, -0.5f, -0.5f,   1.0f, 1.0f, 1.0f,    2.99/3.0f, 2.015/4.0f,
+
+		 0.5f, -0.5f, -0.5f,   1.0f, 1.0f, 1.0f,    2.99/3.0f, 2.015/4.0f,
+		 0.5f, -0.5f,  0.5f,   1.0f, 1.0f, 1.0f,    2.99/3.0f, 1.0/4.0f,
+		 0.5f,  0.5f,  0.5f,   1.0f, 1.0f, 1.0f,    1.99/3.0f, 1.0/4.0f,
+
+		//cara superior 
+		-0.5f,  0.5f, -0.5f,   1.0f, 1.0f, 1.0f,    1.0/3.0f, 2.015/4.0f,
+		  0.5f,  0.5f, -0.5f,   1.0f, 1.0f, 1.0f,   1.99/3.0f, 2.015/4.0f,
+		  0.5f,  0.5f,  0.5f,   1.0f, 1.0f, 1.0f,   1.99/3.0f, 1.0/4.0f,
+
+		  0.5f,  0.5f,  0.5f,   1.0f, 1.0f, 1.0f,   1.99/3.0f, 1.0/4.0f,
+		 -0.5f,  0.5f,  0.5f,   1.0f, 1.0f, 1.0f,   1.0/3.0f, 1.0/4.0f,
+		 -0.5f,  0.5f, -0.5f,   1.0f, 1.0f, 1.0f,   1.0/3.0f, 2.015/4.0f,
+
+		//cara inferior 
+		-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		 1.0/3.0f, 3.98/4.0f,
+		  0.5f, -0.5f, -0.5f,   1.0f, 1.0f, 1.0f,    1.99/3.0f, 3.98/4.0f,
+		  0.5f, -0.5f,  0.5f,   1.0f, 1.0f, 1.0f,    1.99/3.0f, 2.98/4.0f,
+
+		  0.5f, -0.5f,  0.5f,   1.0f, 1.0f, 1.0f,    1.99/3.0f, 2.98/4.0f,
+		 -0.5f, -0.5f,  0.5f,   1.0f, 1.0f, 1.0f,    1.0/3.0f, 3.0/4.0f,
+		 -0.5f, -0.5f, -0.5f,   1.0f, 1.0f, 1.0f,    1.0/3.0f, 3.98/4.0f,
 	};
 
-	GLuint indices[] =
+	/*GLuint indices[] =
 	{  // Note that we start from 0!
 		0,1,3,
 		1,2,3
 	
-	};
+	};*/
 
 	// First, set the container's VAO (and VBO)
 	GLuint VBO, VAO,EBO;
@@ -130,8 +184,9 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	/*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	*/
 
 	// Position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)0);
@@ -157,12 +212,12 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 	// Diffuse map
 	//image = stbi_load("images/checker_Tex.png", &textureWidth, &textureHeight, &nrChannels,0);
-	image = stbi_load("images/colores.jpg", &textureWidth, &textureHeight, &nrChannels, 0);
+	image = stbi_load("images/dado.jpg", &textureWidth, &textureHeight, &nrChannels, 0);
 
 	//cargamos la textura con transparencia 
 	//image = stbi_load("images/window.png", &textureWidth, &textureHeight, &nrChannels, 0);
 	//image = stbi_load("images/transparencia.png", &textureWidth, &textureHeight, &nrChannels, 0);
-
+		
 	glBindTexture(GL_TEXTURE_2D, texture1);
 
 	//Dado que metimos una textura con transparencia, tenemos que decirle a OpenGL que la textura tiene un canal alpha, 
@@ -220,7 +275,9 @@ int main()
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		// Draw the light object (using light's vertex attributes)
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
 		glBindVertexArray(0);
 
 		// Swap the screen buffers
@@ -258,6 +315,16 @@ void DoMovement()
 	if (keys[GLFW_KEY_D] || keys[GLFW_KEY_RIGHT])
 	{
 		camera.ProcessKeyboard(RIGHT, deltaTime);
+	}
+
+	if (keys[GLFW_KEY_SPACE])
+	{
+		camera.ProcessKeyboard(UP, deltaTime);
+	}
+
+	if (keys[GLFW_KEY_LEFT_CONTROL])
+	{
+		camera.ProcessKeyboard(DOWN, deltaTime);
 	}
 }
 
