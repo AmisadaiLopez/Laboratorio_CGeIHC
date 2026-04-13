@@ -72,7 +72,6 @@ float moonAngle = glm::radians(180.0f);
 float sunRotation = 0.0f;
 float moonRotation = 0.0f;
 
-
 bool animSun = false;
 bool animMoon = false;
 
