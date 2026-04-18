@@ -1,0 +1,32 @@
+# Blender 5.1.0 MTL File: 'uploads_files_4915370_Candle+&+Flame.blend'
+# www.blender.org
+
+newmtl Candle_Wax
+Ns 562.500000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+map_Kd vela.png
+
+newmtl Flame_(6_mins)
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd amarillo_vela.png
+
+newmtl Wick
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.010000 0.010000 0.010000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+map_Kd amarillo_vela.png
