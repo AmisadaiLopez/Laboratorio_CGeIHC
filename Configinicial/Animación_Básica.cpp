@@ -1,7 +1,7 @@
 //López Hernández Miriam Amisadai
 //320260366
-//Fecha de entrega: 19/04/2026
-//Previo 10
+//Fecha de entrega: 22/04/2026
+//Practica 10
 
 #include <iostream>
 #include <cmath>
@@ -108,10 +108,40 @@ glm::vec3 Light1 = glm::vec3(0);
 float rotBall = 0;
 bool AnimBall = false;
 //Agregando nuevas variables para la animacion de la pelota
-float narizY = 0.0f;      // la altura de la nariz del perro
-float posBallY = narizY;  // la pelota empieza en la nariz
-bool bajando = false;     // primero va a subir
+/*float posBallY = narizY;  // la pelota empieza en la nariz
+bool bajando = false;     // primero va a subir*/
 
+//Posicion del perro
+float dogX = 0.0f;
+float dogY = 0.0f;
+float dogZ = 0.0f;
+
+//Posicion de la pelota
+float ballX = 0.0f;
+float posBallY = 0.35f;   
+float ballZ = 0.0f;
+
+//Movimiento circular
+float anguloPerro = 0.0f;
+//float velocidadAngular = 0.01f;
+float velocidadAngular = 0.003f;
+
+float centroX = 0.0f;
+float centroZ = 0.0f;
+float radioPerro = 2.0f;
+float radioPelota = 2.0f;
+
+//Evento de choque
+bool choqueEnCurso = false;
+bool subiendoChoque = true;
+bool puedeChocar = true;
+
+//para la animación de choque 
+float dogOffsetY = 0.0f;
+float ballOffsetY = 0.0f;
+
+//Para la animación del perro
+int faseAnimacion = 0; 
 
 // Deltatime
 GLfloat deltaTime = 0.0f;	// Time between current frame and last frame
@@ -129,7 +159,7 @@ int main()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);*/
 
 	// Create a GLFWwindow object that we can use for GLFW's functions
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Animacion basica - Miriam Lopez - Previo 10", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Animacion basica - Miriam Lopez - Practica 10", nullptr, nullptr);
 
 	if (nullptr == window)
 	{
@@ -294,10 +324,19 @@ int main()
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Piso.Draw(lightingShader);
 
+
+
 		model = glm::mat4(1);
+		//Agregando la animación del perro
+		model = glm::translate(model, glm::vec3(dogX, dogY, dogZ));
+		// Para que el perro mire hacia la dirección del movimiento, se rota en Y según el ángulo calculado
+		model = glm::rotate(model, -anguloPerro + glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 0);
 		Dog.Draw(lightingShader);
+
+
+
 
 		/*model = glm::mat4(1);
 		glEnable(GL_BLEND);//Avtiva la funcionalidad para trabajar el canal alfa
@@ -316,11 +355,17 @@ int main()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 1);
 		// mover la pelota solo en Y
-		model = glm::translate(model, glm::vec3(0.0f, posBallY, 0.0f));
+		//model = glm::translate(model, glm::vec3(0.0f, posBallY, 0.0f));
+		//Agregando la animación de movimiento de la pelota en X y Z
+		model = glm::translate(model, glm::vec3(ballX, posBallY, ballZ));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Ball.Draw(lightingShader);
 		glDisable(GL_BLEND);
 		glBindVertexArray(0);
+
+
+
+	
 	
 
 		// Also draw the lamp object, again binding the appropriate shader
@@ -444,7 +489,7 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 		}
 	}
 
-	if (keys[GLFW_KEY_SPACE])
+	/*if (keys[GLFW_KEY_SPACE])
 	{
 		active = !active;
 		if (active)
@@ -461,6 +506,22 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 	{
 		AnimBall = !AnimBall;
 		
+	}*/
+	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+	{
+		active = !active;
+		if (active)
+		{
+			Light1 = glm::vec3(1.0f, 1.0f, 0.0f);
+		}
+		else
+		{
+			Light1 = glm::vec3(0);//Cuado es solo un valor en los 3 vectores pueden dejar solo una componente
+		}
+	}
+	if (key == GLFW_KEY_N && action == GLFW_PRESS)
+	{
+		AnimBall = !AnimBall;
 	}
 }
 /*
@@ -477,7 +538,7 @@ void Animation() {
 }
 */
 
-//Agregando la función de animación para la pelota
+/*//Agregando la función de animación para la pelota
 void Animation() {
 	if (AnimBall)
 	{
@@ -499,6 +560,88 @@ void Animation() {
 				bajando = false;
 			}
 		}
+	}
+}*/
+
+//Agregando la función para la animación del perro y la pelota
+void Animation()
+{
+	if (AnimBall)
+	{
+		// ---------------------------------
+		// RECORRIDO CIRCULAR CONSTANTE
+		// ---------------------------------
+		anguloPerro += velocidadAngular;
+
+		// Perro en un sentido
+		dogX = centroX + radioPerro * cos(anguloPerro);
+		dogZ = centroZ + radioPerro * sin(anguloPerro);
+
+		// Pelota en sentido contrario
+		ballX = centroX + radioPelota * cos(-anguloPerro);
+		ballZ = centroZ + radioPelota * sin(-anguloPerro);
+
+		// ---------------------------------
+		// DETECTAR CUANDO SE CRUZAN
+		// ---------------------------------
+		float dx = dogX - ballX;
+		float dz = dogZ - ballZ;
+		float distanciaXZ = sqrt(dx * dx + dz * dz);
+
+		// Cuando están muy cerca, activar choque
+		if (distanciaXZ < 0.30f && puedeChocar && !choqueEnCurso)
+		//if (distanciaXZ < 0.20f && puedeChocar && !choqueEnCurso)
+		{
+			choqueEnCurso = true;
+			subiendoChoque = true;
+			puedeChocar = false;
+		}
+
+		// Cuando ya se separaron, permitir el siguiente choque
+		if (distanciaXZ > 0.50f && !choqueEnCurso)
+		{
+			puedeChocar = true;
+		}
+
+		// ---------------------------------
+		// ANIMACION DEL CHOQUE
+		// ---------------------------------
+		if (choqueEnCurso)
+		{
+			if (subiendoChoque)
+			{
+
+				dogOffsetY += 0.008f;	// salto del perro
+				ballOffsetY += 0.03f;	// la pelota sube más rápido
+				
+				if (dogOffsetY >= 0.45f)
+				{
+					subiendoChoque = false;
+				}
+			}
+			else
+			{
+				dogOffsetY -= 0.008f;	// bajada del perro
+				ballOffsetY -= 0.012f;	// la pelota baja más rápido
+
+				if (dogOffsetY <= 0.0f)
+					dogOffsetY = 0.0f;
+
+				if (ballOffsetY <= 0.0f)
+					ballOffsetY = 0.0f;
+
+				if (dogOffsetY == 0.0f && ballOffsetY == 0.0f)
+				{
+					choqueEnCurso = false;
+				}
+			}
+		}
+
+		// ---------------------------------
+		// ALTURAS FINALES
+		// ---------------------------------
+		dogY = dogOffsetY;
+		posBallY = 0.35f + ballOffsetY;   // altura normal + subida del choque
 	}
 }
 
