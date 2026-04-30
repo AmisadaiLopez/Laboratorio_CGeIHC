@@ -1,7 +1,7 @@
 //López Hernández Miriam Amisadai
 //320260366
-//Fecha de entrega: 26/04/2026
-//Previo 11
+//Fecha de entrega: 29/04/2026
+//Practica 11
 
 #include <iostream>
 #include <cmath>
@@ -113,15 +113,29 @@ int dogAnim = 0;
 float FLegs = 0.0f;
 float RLegs = 0.0f;
 float head = 0.0f;
+float headTurn = 0.0f; // Giro lateral de la cabeza antes de dar vuelta
 float tail = 0.0f;
 glm::vec3 dogPos (0.0f,0.0f,0.0f);
 float dogRot = 0.0f;
 bool step = false;
+bool PausarAnimacion = false; // Con la tecla P se pausa o se reanuda toda la animación
 
 
-// Limite para que el perro se detenga antes de terminar el piso
-const float LIMITE_PERRO_Z = 2.2f;
+
+// Máquina de estados para la trayectoria del perro
+// El perro inicia en el origen y cambia de estado al llegar a cada extremo/esquina.
+const float LIMITE_PISO = 2.2f;
 const float VELOCIDAD_PERRO = 0.001f;
+const float DISTANCIA_LLEGADA = 0.01f;
+
+// Valores para que las vueltas no sean instantáneas.
+// Primero gira la cabeza y después el cuerpo rota poco a poco hacia la nueva dirección.
+const float GIRO_CABEZA = 25.0f;
+const float VELOCIDAD_GIRO_CABEZA = 1.0f;
+const float VELOCIDAD_GIRO_PERRO = 0.7f;
+const float TOLERANCIA_GIRO = 1.0f;
+int estadoRutaPerro = 1;
+
 
 
 // Deltatime
@@ -140,7 +154,7 @@ int main()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);*/
 
 	// Create a GLFWwindow object that we can use for GLFW's functions
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Animacion maquina de estados - Miriam Lopez - Previo 11", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Animacion maquina de estados - Miriam Lopez - Practica 11", nullptr, nullptr);
 
 	if (nullptr == window)
 	{
@@ -513,21 +527,105 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 	{
 		dogAnim = 1;
 	}
+	// Tecla P: pausa o reanuda la animación.
+	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+	{
+		PausarAnimacion = !PausarAnimacion;
+
+		if (PausarAnimacion)
+			std::cout << "Animacion pausada" << std::endl;
+		else
+			std::cout << "Animacion reanudada" << std::endl;
+	}
 	
 }
+float NormalizarAngulo(float angulo) {
+	while (angulo > 180.0f)
+		angulo -= 360.0f;
+
+	while (angulo < -180.0f)
+		angulo += 360.0f;
+
+	return angulo;
+}
+
+float DiferenciaAngulo(float actual, float objetivo) {
+	return NormalizarAngulo(objetivo - actual);
+}
+
+float AcercarValor(float actual, float objetivo, float velocidad) {
+	if (actual < objetivo) {
+		actual += velocidad;
+		if (actual > objetivo)
+			actual = objetivo;
+	}
+	else if (actual > objetivo) {
+		actual -= velocidad;
+		if (actual < objetivo)
+			actual = objetivo;
+	}
+
+	return actual;
+}
+float AcercarAngulo(float actual, float objetivo, float velocidad) {
+	float diferencia = DiferenciaAngulo(actual, objetivo);
+
+	if (std::fabs(diferencia) <= velocidad)
+		return NormalizarAngulo(objetivo);
+
+	if (diferencia > 0.0f)
+		actual += velocidad;
+	else
+		actual -= velocidad;
+
+	return NormalizarAngulo(actual);
+}
+void GiroNatural(float rotacionObjetivo, int siguienteEstado) {
+	float diferencia = DiferenciaAngulo(dogRot, rotacionObjetivo);
+	float objetivoCabeza = (diferencia >= 0.0f) ? GIRO_CABEZA : -GIRO_CABEZA;
+
+	// Mientras todavía falta girar el cuerpo, primero movemos la cabeza
+	// hacia la dirección de la nueva trayectoria.
+	if (std::fabs(diferencia) > TOLERANCIA_GIRO) {
+		headTurn = AcercarValor(headTurn, objetivoCabeza, VELOCIDAD_GIRO_CABEZA);
+
+		// Cuando la cabeza ya está apuntando hacia la vuelta,
+		// el cuerpo empieza a girar poco a poco.
+		if (std::fabs(headTurn - objetivoCabeza) <= 3.0f) {
+			dogRot = AcercarAngulo(dogRot, rotacionObjetivo, VELOCIDAD_GIRO_PERRO);
+		}
+	}
+	else {
+		dogRot = NormalizarAngulo(rotacionObjetivo);
+		headTurn = AcercarValor(headTurn, 0.0f, VELOCIDAD_GIRO_CABEZA);
+
+		// Al terminar la vuelta, la cabeza vuelve al frente y ahora sí avanza al siguiente estado.
+		if (std::fabs(headTurn) <= 0.5f) {
+			headTurn = 0.0f;
+			estadoRutaPerro = siguienteEstado;
+		}
+	}
+}
+
 void Animation() {
+	// Si se presiona la tecla P, la animación queda congelada en la posición actual.
+	if (PausarAnimacion)
+		return;
+
 	if (AnimBall)
 	{
 		rotBall += 0.4f;
 		//printf("%f", rotBall);
 	}
-	
+
 	if (AnimDog)
 	{
 		rotDog -= 0.6f;
 		//printf("%f", rotBall);
 	}
-	if (dogAnim == 1) { // Animacion de caminar 
+
+	if (dogAnim == 1) { // Animacion de caminar
+		// Movimiento de patas, cabeza y cola
 		if (!step) { // State 1
 			RLegs += 0.3f;
 			FLegs += 0.3f;
@@ -537,30 +635,107 @@ void Animation() {
 			if (RLegs >= 15.0f)
 				step = true;
 		}
-		else { 
+		else {
 			RLegs -= 0.3f;
 			FLegs -= 0.3f;
 			head -= 0.3f;
 			tail -= 0.3f;
+
 			if (RLegs <= -15.0f)
 				step = false;
 		}
-		// El perro solo avanza mientras no llegue al limite del piso
-		if (dogPos.z + VELOCIDAD_PERRO < LIMITE_PERRO_Z) {
-			dogPos.z += VELOCIDAD_PERRO;
+
+		// Máquina de estados de la trayectoria del perro
+		// En los estados de caminar, el perro se desplaza.
+		// En los estados de giro, primero mueve la cabeza y después gira el cuerpo lentamente.
+
+		// Estado 1: sale del origen y baja al extremo del piso.
+		if (estadoRutaPerro == 1) {
+			headTurn = AcercarValor(headTurn, 0.0f, VELOCIDAD_GIRO_CABEZA);
+			dogRot = 180.0f;
+			dogPos.z -= VELOCIDAD_PERRO;
+
+			if (dogPos.z <= -LIMITE_PISO) {
+				dogPos.z = -LIMITE_PISO;
+				estadoRutaPerro = 2; // ahora prepara la vuelta hacia la izquierda del piso
+			}
 		}
-		else {
-			dogPos.z = LIMITE_PERRO_Z;
-			dogAnim = 0;       // Detiene la animacion de caminar
-			RLegs = 0.0f;      // Regresa las patas a posicion normal
-			FLegs = 0.0f;
-			head = 0.0f;
-			tail = 0.0f;
+
+		// Estado 2: vuelta natural para tomar el camino hacia la primera esquina.
+		else if (estadoRutaPerro == 2) {
+			GiroNatural(-90.0f, 3);
+		}
+
+		// Estado 3: camina hacia la primera esquina.
+		else if (estadoRutaPerro == 3) {
+			dogPos.x -= VELOCIDAD_PERRO;
+
+			if (dogPos.x <= -LIMITE_PISO) {
+				dogPos.x = -LIMITE_PISO;
+				estadoRutaPerro = 4;
+			}
+		}
+
+		// Estado 4: vuelta natural para subir por el contorno.
+		else if (estadoRutaPerro == 4) {
+			GiroNatural(0.0f, 5);
+		}
+
+		// Estado 5: sube por el contorno hasta la segunda esquina.
+		else if (estadoRutaPerro == 5) {
+			dogPos.z += VELOCIDAD_PERRO;
+
+			if (dogPos.z >= LIMITE_PISO) {
+				dogPos.z = LIMITE_PISO;
+				estadoRutaPerro = 6;
+			}
+		}
+
+		// Estado 6: vuelta natural para avanzar por la parte superior.
+		else if (estadoRutaPerro == 6) {
+			GiroNatural(90.0f, 7);
+		}
+
+		// Estado 7: avanza por la parte superior hasta la tercera esquina.
+		else if (estadoRutaPerro == 7) {
+			dogPos.x += VELOCIDAD_PERRO;
+
+			if (dogPos.x >= LIMITE_PISO) {
+				dogPos.x = LIMITE_PISO;
+				estadoRutaPerro = 8;
+			}
+		}
+
+		// Estado 8: vuelta natural para quedar en diagonal hacia el origen.
+		else if (estadoRutaPerro == 8) {
+			GiroNatural(-135.0f, 9);
+		}
+
+		// Estado 9: regresa al origen en diagonal.
+		else if (estadoRutaPerro == 9) {
+			glm::vec3 origen = glm::vec3(0.0f, 0.0f, 0.0f);
+			glm::vec3 direccion = origen - dogPos;
+			direccion.y = 0.0f;
+
+			float distancia = glm::length(direccion);
+
+			if (distancia > DISTANCIA_LLEGADA) {
+				direccion = glm::normalize(direccion);
+				dogPos += direccion * VELOCIDAD_PERRO;
+			}
+			else {
+				dogPos = origen;
+				estadoRutaPerro = 10;
+			}
+		}
+
+		// Estado 10: vuelve a orientar el cuerpo para repetir la trayectoria desde el origen.
+		else if (estadoRutaPerro == 10) {
+			GiroNatural(180.0f, 1);
 		}
 	}
-	
-	
 }
+
 
 void MouseCallback(GLFWwindow *window, double xPos, double yPos)
 {
