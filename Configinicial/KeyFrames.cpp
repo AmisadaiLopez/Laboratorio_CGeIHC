@@ -1,10 +1,13 @@
 //López Hernández Miriam Amisadai
 //320260366
-//Fecha de entrega: 03/05/2026
-//Previo 12
+//Fecha de entrega: 05/05/2026
+//Practica 12
 
 #include <iostream>
 #include <cmath>
+
+//Agregando libreria para el archivo .txt
+#include <fstream>
 
 // GLEW
 #include <GL/glew.h>
@@ -35,6 +38,11 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 void MouseCallback(GLFWwindow *window, double xPos, double yPos);
 void DoMovement();
 void Animation();
+
+//Prototipos para guardar y cargar la animacion
+void guardarAnimacionTXT(const char* nombreArchivo);
+void cargarAnimacionTXT(const char* nombreArchivo);
+
 
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -160,6 +168,10 @@ typedef struct _frame {
 	float tail;
 	float tailInc;
 
+	//Inclinacion del cuerpo
+	float bodyTilt;
+	float bodyTiltInc;
+
 } FRAME;
 
 
@@ -191,6 +203,9 @@ void saveFrame(void)
 	//Para el frame de la cola
 	KeyFrame[FrameIndex].tail = tail;
 
+	//Para el frame del cuerpo
+	KeyFrame[FrameIndex].bodyTilt = bodyTilt;
+
 	FrameIndex++;
 }
 
@@ -211,6 +226,9 @@ void resetElements(void)
 
 	//Cola
 	tail = KeyFrame[0].tail;
+
+	//Cuerpo
+	bodyTilt = KeyFrame[0].bodyTilt;
 
 
 	rotDog = KeyFrame[0].rotDog;
@@ -237,8 +255,86 @@ void interpolation(void)
 
 	// Cola
 	KeyFrame[playIndex].tailInc = (KeyFrame[playIndex + 1].tail - KeyFrame[playIndex].tail) / i_max_steps;
+
+	// Cuerpo
+	KeyFrame[playIndex].bodyTiltInc = (KeyFrame[playIndex + 1].bodyTilt - KeyFrame[playIndex].bodyTilt) / i_max_steps;
+}
+//Funcion para guardar la animacion en un archivo de texto
+void guardarAnimacionTXT(const char* nombreArchivo)
+{
+	std::ofstream archivo(nombreArchivo);
+
+	if (!archivo.is_open())
+	{
+		std::cout << "No se pudo crear el archivo de animacion." << std::endl;
+		return;
+	}
+
+	// Primero guardamos cuántos keyframes existen
+	archivo << FrameIndex << std::endl;
+
+	for (int i = 0; i < FrameIndex; i++)
+	{
+		archivo
+			<< KeyFrame[i].dogPosX << " "
+			<< KeyFrame[i].dogPosY << " "
+			<< KeyFrame[i].dogPosZ << " "
+			<< KeyFrame[i].rotDog << " "
+			<< KeyFrame[i].head << " "
+			<< KeyFrame[i].tail << " "
+			<< KeyFrame[i].FLeftLeg << " "
+			<< KeyFrame[i].FRightLeg << " "
+			<< KeyFrame[i].BLeftLeg << " "
+			<< KeyFrame[i].BRightLeg << " "
+			<< KeyFrame[i].bodyTilt
+			<< std::endl;
+	}
+
+	archivo.close();
+
+	std::cout << "Animacion guardada en " << nombreArchivo << std::endl;
 }
 
+//Funcion para cargar la animacion desde un archivo de texto
+void cargarAnimacionTXT(const char* nombreArchivo)
+{
+	std::ifstream archivo(nombreArchivo);
+
+	if (!archivo.is_open())
+	{
+		std::cout << "No se pudo abrir el archivo de animacion." << std::endl;
+		return;
+	}
+
+	archivo >> FrameIndex;
+
+	if (FrameIndex > MAX_FRAMES)
+	{
+		FrameIndex = MAX_FRAMES;
+	}
+
+	for (int i = 0; i < FrameIndex; i++)
+	{
+		archivo
+			>> KeyFrame[i].dogPosX
+			>> KeyFrame[i].dogPosY
+			>> KeyFrame[i].dogPosZ
+			>> KeyFrame[i].rotDog
+			>> KeyFrame[i].head
+			>> KeyFrame[i].tail
+			>> KeyFrame[i].FLeftLeg
+			>> KeyFrame[i].FRightLeg
+			>> KeyFrame[i].BLeftLeg
+			>> KeyFrame[i].BRightLeg
+			>> KeyFrame[i].bodyTilt;
+	}
+
+	archivo.close();
+
+	resetElements();
+
+	std::cout << "Animacion cargada desde " << nombreArchivo << std::endl;
+}
 
 
 // Deltatime
@@ -257,7 +353,7 @@ int main()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);*/
 
 	// Create a GLFWwindow object that we can use for GLFW's functions
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Animacion maquina de estados - Previo 12 - Miriam Lopez", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Animacion maquina de estados - Practica 12 - Miriam Lopez", nullptr, nullptr);
 
 	if (nullptr == window)
 	{
@@ -339,6 +435,9 @@ int main()
 
 		KeyFrame[i].tail = 0.0f;
 		KeyFrame[i].tailInc = 0.0f;
+
+		KeyFrame[i].bodyTilt = 0.0f;
+		KeyFrame[i].bodyTiltInc = 0.0f;
 	}
 
 
@@ -779,6 +878,16 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 
 	}
 
+	//Guardar y cargar animacion en un archivo de texto
+	if (key == GLFW_KEY_O && action == GLFW_PRESS)
+	{
+		guardarAnimacionTXT("animacion_perro.txt");
+	}
+
+	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+	{
+		cargarAnimacionTXT("animacion_perro.txt");
+	}
 
 
 	if (GLFW_KEY_ESCAPE == key && GLFW_PRESS == action)
@@ -855,6 +964,9 @@ void Animation() {
 
 			//Cola
 			tail += KeyFrame[playIndex].tailInc;
+
+			//Cuerpo
+			bodyTilt += KeyFrame[playIndex].bodyTiltInc;
 
 			i_curr_steps++;
 		}
